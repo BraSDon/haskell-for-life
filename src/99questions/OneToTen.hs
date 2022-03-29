@@ -57,6 +57,16 @@ compress (x:(y:ys))
 
 -- Problem 9: Pack consecutive duplicates of list elements into sublists
 pack :: Eq a => [a] -> [[a]]
+pack [] = []
+pack [x] = [[x]]
+pack (x:xs) = if elem x $ head p
+              then (x:head p):tail p
+              else [x]:p
+              where p = pack xs
+
+-- Problem 10: Length encoding of a list
+encode :: Eq a => [a] -> [(Int, a)]
+encode xs = map (\a -> (length a, head a)) (pack xs)
 
 main :: IO()
 main = do
@@ -66,3 +76,5 @@ main = do
     print $ isPalindrome [1,2,3,2,1]
     print $ flatten [[1,2],[5,8],[8,2,3,5,6]]
     print $ compress [1,1,2,2,3,3,4,4,4,5,5]
+    print $ pack [1,1,2,2,3,3,4,4,4,5,5]
+    print $ encode [1,1,2,2,3,3,4,4,4,5,5]
