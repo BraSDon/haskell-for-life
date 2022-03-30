@@ -68,6 +68,46 @@ pack (x:xs) = if elem x $ head p
 encode :: Eq a => [a] -> [(Int, a)]
 encode xs = map (\a -> (length a, head a)) (pack xs)
 
+-- Problem 11: Modified encoding
+data Encoding a = Tuple (Int, a) | Singleton a
+
+instance (Show a) => Show (Encoding a) where
+    show (Tuple (n,x)) = "(" ++ show n ++ "," ++ show x ++ ")"
+    show (Singleton x) = show x
+
+singletonEncode :: Eq a => [a] -> [Encoding a]
+singletonEncode xs = map (\a -> if length a > 1 then Tuple(length a, head a) else Singleton (head a)) (pack xs)
+
+-- Problem 12: Decode
+singletonDecode :: Eq a => [Encoding a] -> [a]
+singletonDecode = concatMap decode
+    where decode (Tuple (n,x)) = [x | i <- [1..n]]
+          decode (Singleton x) = [x]
+
+-- Problem 13: Like Problem 10 but direct (so not using solution of Problem 9)
+directEncode :: Eq a => [a] -> [Encoding a]
+directEncode [] = []
+directEncode [x] = [Singleton x]
+directEncode xs = map f (group (map (\x -> Tuple(1, x)) xs))
+    where f (Tuple (1,x)) = Singleton x
+          f (Tuple (n,x)) = Tuple (n,x)
+          f (Singleton x) = Singleton x
+
+group :: Eq a => [Encoding a] -> [Encoding a]
+group [] = []
+group [x] = [x]
+group (Tuple (n,x1):Tuple (m,x2):ys)
+    | x1 == x2 = group (Tuple (n+m, x1):ys)
+    | otherwise = Tuple (n,x1): group (Tuple (m,x2):ys)
+
+-- Problem 14: Duplicate elements of a list
+duplicate :: [a] -> [a]
+duplicate = foldr (\ x -> (++) (x : [x])) []
+
+-- Problem 15: Replicate elements of list for given number of times
+repli :: Int -> [a] -> [a]
+repli n = concatMap (\x -> [x | i <- [1..n]])
+
 main :: IO()
 main = do
     print $ len [1,2,3,4,5]
@@ -77,4 +117,8 @@ main = do
     print $ flatten [[1,2],[5,8],[8,2,3,5,6]]
     print $ compress [1,1,2,2,3,3,4,4,4,5,5]
     print $ pack [1,1,2,2,3,3,4,4,4,5,5]
-    print $ encode [1,1,2,2,3,3,4,4,4,5,5]
+    print $ encode [1,2,2,3,3,4,4,4,5,5]
+    print $ singletonEncode [1,2,2,3,3,4,4,4,5,5]
+    print $ (singletonDecode . singletonEncode) [1,2,2,3,3,4,4,4,5,5]
+    print $ repli 3 [1,2,3]
+    print $ directEncode [1,3,4,4,4,5,5]
