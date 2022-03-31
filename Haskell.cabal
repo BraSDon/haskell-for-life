@@ -27,6 +27,7 @@ library
   exposed-modules:
       Ast
       Lib
+      Test
   other-modules:
       Paths_Haskell
   hs-source-dirs:
