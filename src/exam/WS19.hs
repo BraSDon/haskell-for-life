@@ -43,10 +43,10 @@ go q = addChild $ dequeue q
 
 main :: IO()
 main = do
-    print $ subst "abcd" "abcd"
-    print $ subst "abcd" "abcde"
-    print $ subst "abcd" "abce"
-    print $ subst "abcd" "ab"
+    print $ substr "abcd" "abcd"
+    print $ substr "abcd" "abcde"
+    print $ substr "abcd" "abce"
+    print $ substr "abcd" "ab"
     print . toList  $ enqueue 6 $ fromList [1,2,3,4,5]
     --print . f $ dequeue $ Q [] [1,2,3,4,5]
     --    where f (Just (x, q)) = (x, toList q)
